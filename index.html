@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>My Web App</title>
+</head>
+
+<body>
+    <section>
+      <h3>Send data to web app </h3>
+      Open browser console for extra logging
+      <form>
+        <p>
+          <label for="my_input">Client Request: </label>
+          <input type="text" id="my_input" value="Greetings from client">
+        </p>
+        <p>
+          <button id="submit_btn">Send to server</button>
+        </p>      
+      </form>     
+      <div id="info"></div>
+      <div id="result"></div>
+    </section>
+
+  <script type="text/javascript">
+
+    // Submit
+    const submit_button = document.getElementById('submit_btn');
+    submit_button.addEventListener('click', async event => {
+      event.preventDefault();
+      event.stopPropagation();
+      document.getElementById('info').textContent = "Sending request to server.";
+      client_data = document.getElementById('my_input').value;
+      const post_data = { client_data };
+      server_answer = await postRequest(post_data);
+      
+      // We got a response back from the server
+      document.getElementById('info').textContent = server_answer.info_message;
+
+      if(server_answer.success){
+        document.getElementById('result').innerHTML = "Made it to the deep end and back";
+      }
+      else{
+        document.getElementById('result').innerHTML = "Oops made a booboo";
+      }
+    });
+
+  async function postRequest(my_data) {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+      body: JSON.stringify(my_data)
+    };
+    const response = await fetch('/webapp/app', options);
+    const json = await response.json();
+    console.log(json);
+    return json;
+  }
+
+
+ </script>
+
+</body>
+</html>
